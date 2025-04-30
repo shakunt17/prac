@@ -58,3 +58,51 @@ Ensure nodev option set on removable media partitions
 Ensure nosuid option set on removable media partitions
 
 Ensure noexec option set on removable media partitions
+
+---
+- name: Disable mounting of specific filesystems
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure /etc/modprobe.d/blacklist.conf exists
+      ansible.builtin.file:
+        path: /etc/modprobe.d/blacklist.conf
+        state: touch
+    - name: Disabled cramps filesystem
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        line: "install cramfs /bin/true"
+        create: yes
+    - name: Disbaled freevxfs filesystem
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        line: "install freevxfs /bin/true"
+        create: yes
+    - name: Disabled jffs2 filesystem
+      anisble.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        line: "install jffs2 /bin/true"
+        create: yes 
+    - name: Disbaled hfs filesystem
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        line: "install hfs /bin/true"
+        create: yes 
+    - name: Disabled hfsplus filesystem
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        line: "install hfsplus /bin/true"
+        create: yes
+    - name: Disabled udf filesystem 
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/blacklist.conf
+        line: "install udf /bin/true"
+        create: yes 
+    - name: Update initramfs
+      ansible.builtin.command:
+       cmd: update-initramfs -u
+    - name: Reboot the system
+      ansible.builtin.reboot:
+        msg: "Rebooting to apply changes"
+        connect_timeout: 5
+        reboot_timeout: 600
